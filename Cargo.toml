@@ -1,0 +1,8 @@
+[package]
+name = "opencv"
+version = "0.0.1"
+authors = [ "woxtu <woxtup@gmail.com>" ]
+
+[lib]
+name = "opencv"
+path = "src/lib.rs"
