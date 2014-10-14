@@ -7,4 +7,5 @@
 
 extern crate libc;
 
+pub mod image;
 mod ffi;
