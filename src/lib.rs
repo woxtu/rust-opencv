@@ -9,5 +9,4 @@ extern crate libc;
 
 pub mod highgui;
 pub mod image;
-pub mod window;
 mod ffi;
