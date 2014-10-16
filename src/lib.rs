@@ -3,7 +3,7 @@
 #![desc = "Wrapper for OpenCV"]
 #![license = "MIT"]
 
-#![feature(globs)]
+#![feature(globs, unsafe_destructor)]
 
 extern crate libc;
 
