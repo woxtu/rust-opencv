@@ -1,13 +1,14 @@
 use libc::{c_char, c_double, c_int, c_void};
-use ffi::types::{CvCapture, CvMat, IplImage};
+use ffi::types::{CvCapture, CvMat, CvSize, CvVideoWriter, IplImage};
 
 #[link(name = "opencv_highgui")]
 extern "C" {
-  pub fn cvCreateTrackbar(trackbar_name: *const c_char,
-                          window_name: *const c_char,
-                          value: *const c_int,
-                          count: c_int,
-                          on_change: extern "C" fn (c_int) -> ()) -> c_int;
+  pub fn cvCreateTrackbar2(trackbar_name: *const c_char,
+                           window_name: *const c_char,
+                           value: *const c_int,
+                           count: c_int,
+                           on_change: extern "C" fn (c_int, *const c_void) -> (),
+                           userdata: *const c_void) -> c_int;
   pub fn cvGetTrackbarPos(trackbar_name: *const c_char, window_name: *const c_char) -> c_int;
   pub fn cvShowImage(name: *const c_char, image: *const CvMat) -> ();
   pub fn cvNamedWindow(name: *const c_char, flags: c_int) -> c_int;
@@ -30,5 +31,8 @@ extern "C" {
   pub fn cvRetrieveFrame(capture: *const CvCapture, streamIdx: c_int) -> *const IplImage;
   pub fn cvQueryFrame(capture: *const CvCapture) -> *const IplImage;
   pub fn cvGetCaptureProperty(capture: *const CvCapture, property_id: c_int) -> c_double;
+  pub fn cvSetCaptureProperty(capture: *const CvCapture, property_id: c_int, value: c_double) -> c_int;
+  pub fn cvCreateVideoWriter(filename: *const char, fourcc: c_int, fps: c_double, frame_size: CvSize, is_color: c_int) -> *const CvVideoWriter;
+  pub fn cvReleaseVideoWriter(writer: *const *const CvVideoWriter) -> ();
+  pub fn cvWriteFrame(writer: *const CvVideoWriter, image: *const IplImage) -> c_int;
 }
-

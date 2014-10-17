@@ -13,4 +13,7 @@ pub struct CvSize {
 }
 
 #[repr(C)]
+pub struct CvVideoWriter;
+
+#[repr(C)]
 pub struct IplImage;
