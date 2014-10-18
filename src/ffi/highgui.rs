@@ -10,7 +10,7 @@ extern "C" {
                            on_change: extern "C" fn (c_int, *const c_void) -> (),
                            userdata: *const c_void) -> c_int;
   pub fn cvGetTrackbarPos(trackbar_name: *const c_char, window_name: *const c_char) -> c_int;
-  pub fn cvShowImage(name: *const c_char, image: *const CvMat) -> ();
+  pub fn cvShowImage(name: *const c_char, image: *const IplImage) -> ();
   pub fn cvNamedWindow(name: *const c_char, flags: c_int) -> c_int;
   pub fn cvDestroyWindow(name: *const c_char) -> ();
   pub fn cvMoveWindow(name: *const c_char, x: c_int, y: c_int) -> ();
@@ -20,10 +20,10 @@ extern "C" {
                             param: *const c_void) -> ();
   pub fn cvSetTrackbarPos(trackbar_name: *const c_char, window_name: *const c_char, pos: c_int) -> ();
   pub fn cvWaitKey(delay: c_int) -> c_int;
-  pub fn cvDecodeImageM(buf: *const CvMat, iscolor: c_int) -> *const CvMat;
+  pub fn cvDecodeImage(buf: *const CvMat, iscolor: c_int) -> *const IplImage;
   pub fn cvEncodeImage(ext: *const c_char, image: *const CvMat, params: *const c_int) -> *const CvMat;
-  pub fn cvLoadImageM(filename: *const c_char, iscolor: c_int) -> *const CvMat;
-  pub fn cvSaveImage(filename: *const c_char, image: *const CvMat, params: *const c_int) -> c_int;
+  pub fn cvLoadImage(filename: *const c_char, iscolor: c_int) -> *const IplImage;
+  pub fn cvSaveImage(filename: *const c_char, image: *const IplImage, params: *const c_int) -> c_int;
   pub fn cvCaptureFromCAM(device: c_int) -> *const CvCapture;
   pub fn cvCaptureFromFile(filename: *const c_char) -> *const CvCapture;
   pub fn cvReleaseCapture(capture: *const *const CvCapture) -> ();

@@ -1,6 +1,9 @@
 use libc::c_int;
 
 #[repr(C)]
+pub struct CvArr;
+
+#[repr(C)]
 pub struct CvCapture;
 
 #[repr(C)]
