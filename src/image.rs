@@ -23,12 +23,9 @@ impl Image {
     })
   }
 
-  pub fn save(&self, path: &Path) -> Result<(), &Image> {
+  pub fn save(&self, path: &Path) -> bool {
     path.with_c_str(|path| unsafe {
-      match cvSaveImage(path, self.raw, ptr::null()) {
-        0 => Err(self),
-        _ => Ok(()),
-      }
+      cvSaveImage(path, self.raw, ptr::null()) == 0
     })
   }
 
