@@ -4,9 +4,11 @@
 #![license = "MIT"]
 
 #![feature(globs, unsafe_destructor)]
+#![deny(unused_imports)]
 
 extern crate libc;
 
 pub mod highgui;
 pub mod image;
+pub mod video;
 mod ffi;
