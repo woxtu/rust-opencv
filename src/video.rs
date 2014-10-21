@@ -5,22 +5,28 @@ use image::Image;
 
 pub struct Frames<'a> {
   capture: &'a Capture,
-  index: uint,
-  count: uint,
+}
+
+impl<'a> Frames<'a> {
+  pub fn at(&self, index: uint) -> Option<Image> {
+    unsafe {
+      cvSetCaptureProperty(self.capture.raw, 1, index as f64);
+      match cvQueryFrame(self.capture.raw) {
+        p if p.is_not_null() => Some(Image { raw: cvCloneImage(p) }),
+        _ => None,
+      }
+    }
+  }
+
+  pub fn count(&self) -> uint {
+    unsafe { cvGetCaptureProperty(self.capture.raw, 7) as uint - 2 } // ??
+  }
 }
 
 impl<'a> Iterator<Image> for Frames<'a> {
   fn next(&mut self) -> Option<Image> {
-    if self.index < self.count {
-      let result = unsafe {
-        cvSetCaptureProperty(self.capture.raw, 1i32, self.index as f64);
-        Image { raw: cvCloneImage(cvQueryFrame(self.capture.raw)) }
-      };
-      self.index = self.index + 1u;
-      Some(result)
-    } else {
-      None
-    }
+    let index = unsafe { cvGetCaptureProperty(self.capture.raw, 1) as uint };
+    self.at(index + 1)
   }
 }
 
@@ -39,10 +45,7 @@ impl Capture {
   }
 
   pub fn frames(&self) -> Frames {
-    let count = unsafe {
-      cvGetCaptureProperty(self.raw, 7i32)
-    } as uint;
-    Frames { capture: self, index: 0u, count: count }
+    Frames { capture: self }
   }
 }
 
