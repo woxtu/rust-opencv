@@ -15,3 +15,6 @@ extern "C" {
   pub fn cvWriteFrame(writer: *const CvVideoWriter, image: *const IplImage) -> c_int;
   pub fn cvReleaseVideoWriter(writer: *const *const CvVideoWriter) -> ();
 }
+
+pub static CV_CAP_PROP_POS_FRAMES: c_int = 1;
+pub static CV_CAP_PROP_FRAME_COUNT: c_int = 7;

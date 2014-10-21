@@ -10,7 +10,7 @@ pub struct Frames<'a> {
 impl<'a> Frames<'a> {
   pub fn at(&self, index: uint) -> Option<Image> {
     unsafe {
-      cvSetCaptureProperty(self.capture.raw, 1, index as f64);
+      cvSetCaptureProperty(self.capture.raw, CV_CAP_PROP_POS_FRAMES, index as f64);
       match cvQueryFrame(self.capture.raw) {
         p if p.is_not_null() => Some(Image { raw: cvCloneImage(p) }),
         _ => None,
@@ -19,13 +19,13 @@ impl<'a> Frames<'a> {
   }
 
   pub fn count(&self) -> uint {
-    unsafe { cvGetCaptureProperty(self.capture.raw, 7) as uint - 2 } // ??
+    unsafe { cvGetCaptureProperty(self.capture.raw, CV_CAP_PROP_FRAME_COUNT) as uint - 2 } // ??
   }
 }
 
 impl<'a> Iterator<Image> for Frames<'a> {
   fn next(&mut self) -> Option<Image> {
-    let index = unsafe { cvGetCaptureProperty(self.capture.raw, 1) as uint };
+    let index = unsafe { cvGetCaptureProperty(self.capture.raw, CV_CAP_PROP_POS_FRAMES) as uint };
     self.at(index + 1)
   }
 }
