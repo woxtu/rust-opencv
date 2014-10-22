@@ -40,7 +40,7 @@ impl<'a> Window<'a> {
 
   pub fn show(&self, image: &Image) -> () {
     self.name.with_c_str(|name| unsafe {
-      cvShowImage(name, image.raw);
+      cvShowImage(name, image.ptr());
     })
   }
 

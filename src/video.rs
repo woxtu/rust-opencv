@@ -1,7 +1,6 @@
-use ffi::core::*;
 use ffi::video::*;
 use ffi::types::{CvCapture};
-use image::Image;
+use image::{BorrowedImage, Image};
 
 pub struct Frames<'a> {
   capture: &'a Capture,
@@ -12,7 +11,7 @@ impl<'a> Frames<'a> {
     unsafe {
       cvSetCaptureProperty(self.capture.raw, CV_CAP_PROP_POS_FRAMES, index as f64);
       match cvQueryFrame(self.capture.raw) {
-        p if p.is_not_null() => Some(Image { raw: cvCloneImage(p) }),
+        p if p.is_not_null() => Some(BorrowedImage(p)),
         _ => None,
       }
     }
