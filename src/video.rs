@@ -1,5 +1,6 @@
+use std::mem;
 use ffi::video::*;
-use ffi::types::{CvCapture};
+use ffi::types::{CvCapture, CvSize, CvVideoWriter};
 use image::{BorrowedImage, Image};
 
 pub struct Frames<'a> {
@@ -51,5 +52,34 @@ impl Capture {
 impl Drop for Capture {
   fn drop(&mut self) -> () {
     unsafe { cvReleaseCapture(&self.raw); }
+  }
+}
+
+pub struct Writer {
+  raw: *const CvVideoWriter,
+}
+
+impl Writer {
+  pub fn open(path: &Path, fourcc: &[char, ..4], fps: f64, frame_width: int, frame_height: int, is_color: bool) -> Result<Writer, String> {
+    let fourcc = unsafe { mem::transmute::<_, i32>([fourcc[0] as u8, fourcc[1] as u8, fourcc[2] as u8, fourcc[3] as u8]) };
+    let frame_size = CvSize { width: frame_width as i32, height: frame_height as i32 };
+    let is_color = if is_color { 1i } else { 0i };
+
+    path.with_c_str(|path| unsafe {
+      match cvCreateVideoWriter(path, fourcc, fps as f64, frame_size, is_color as i32) {
+        p if p.is_not_null() => Ok(Writer { raw: p }),
+        _ => Err(path.to_string()),
+      }
+    })
+  }
+
+  pub fn write(&self, image: &Image) -> bool {
+    unsafe { cvWriteFrame(self.raw, image.ptr()) != 0 }
+  }
+}
+
+impl Drop for Writer {
+  fn drop(&mut self) -> () {
+    unsafe { cvReleaseVideoWriter(&self.raw); }
   }
 }
