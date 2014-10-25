@@ -1,0 +1,52 @@
+use libc::{c_double, c_float, c_int, c_void};
+use ffi::types::{CvArr, CvHuMoments, CvMat, CvMoments, CvPoint, CvPoint2D32f, CvScalar, CvSize, CvTermCriteria, IplConvKernel}; 
+
+#[link(name = "opencv_video")]
+extern "C" {
+  pub fn cvAcc(image: *const CvArr, sum: *const CvArr, mask: *const CvArr); 
+  pub fn cvSquareAcc(image: *const CvArr, sqsum: *const CvArr, mask: *const CvArr);
+  pub fn cvMultiplyAcc(image1: *const CvArr, image2: *const CvArr, acc: *const CvArr, mask: *const CvArr);
+  pub fn cvRunningAvg(image: *const CvArr, acc: *const CvArr, alpha: c_double, mask: *const CvArr);
+  pub fn cvCopyMakeBorder(src: *const CvArr, dst: *const CvArr, offset: CvPoint, bordertype: c_int, value: CvScalar);
+  pub fn cvSmooth(src: *const CvArr, dst: *const CvArr, smoothtype: c_int, size1: c_int, size2: c_int, sigma1: c_double, sigma2: c_double);
+  pub fn cvFilter2D(src: *const CvArr, dst: *const CvArr, kernel: *const CvMat, anchor: CvPoint);
+  pub fn cvIntegral(image: *const CvArr, sum: *const CvArr, sqsum: *const CvArr, tilted_sum: *const CvArr);
+  pub fn cvPyrDown(src: *const CvArr, dst: *const CvArr, filter: c_int);
+  pub fn cvPyrUp(src: *const CvArr, dst: *const CvArr, filter: c_int);
+  pub fn cvCreatePyramid(img: *const CvArr, extra_layers: c_int, rate: c_double, layer_sizes: *const CvSize, bufarr: *const CvArr, calc: c_int, filter: c_int) -> *const *const CvMat;
+  pub fn cvReleasePyramid(pyramid: *const *const *const CvMat, extra_layers: c_int);
+  pub fn cvPyrMeanShiftFiltering(src: *const CvArr, dst: *const CvArr, sp: c_double, sr: c_double, max_level: c_int, termcrit: CvTermCriteria);
+  pub fn cvWatershed(image: *const CvArr, markers: *const CvArr);
+  pub fn cvSobel(src: *const CvArr, dst: *const CvArr, xorder: c_int, yorder: c_int, aperture_size: c_int);
+  pub fn cvLaplace(src: *const CvArr, dst: *const CvArr, aperture_size: c_int);
+  pub fn cvCvtColor(src: *const CvArr, dst: *const CvArr, code: c_int);
+  pub fn cvResize(src: *const CvArr, dst: *const CvArr, interpolation: c_int);
+  pub fn cvWarpAffine(src: *const CvArr, dst: *const CvArr, map_matrix: *const CvMat, flags: c_int, fillval: CvScalar);
+  pub fn cvGetAffineTransform(src: *const CvPoint2D32f, dst: *const CvPoint2D32f, map_matrix: *const CvMat) -> *const CvMat;
+  pub fn cv2DRotationMatrix(center: CvPoint2D32f, angle: c_double, scale: c_double, map_matrix: *const CvMat) -> *const CvMat;
+  pub fn cvWarpPerspective(src: *const CvArr, dst: *const CvArr, map_matrix: *const CvMat, flags: c_int, fillval: CvScalar);
+  pub fn cvGetPerspectiveTransform(src: *const CvPoint2D32f, dst: *const CvPoint2D32f, map_matrix: *const CvMat) -> *const CvMat;
+  pub fn cvRemap(src: *const CvArr, dst: *const CvArr, mapx: *const CvArr, mapy: *const CvArr, flags: c_int, fillval: CvScalar);
+  pub fn cvConvertMaps(mapx: *const CvArr, mapy: *const CvArr, mapxy: *const CvArr, mapalpha: *const CvArr);
+  pub fn cvLogPolar(src: *const CvArr, dst: *const CvArr, center: CvPoint2D32f, M: c_double, flags: c_int);
+  pub fn cvLinearPolar(src: *const CvArr, dst: *const CvArr, center: CvPoint2D32f, maxRadius: c_double, flags: c_int);
+  pub fn cvUndistort2(src: *const CvArr, dst: *const CvArr, camera_matrix: *const CvMat, distortion_coeffs: *const CvMat, new_camera_matrix: *const CvMat);
+  pub fn cvInitUndistortMap(camera_matrix: *const CvMat, distortion_coeffs: *const CvMat, mapx: *const CvArr, mapy: *const CvArr);
+  pub fn cvInitUndistortRectifyMap(camera_matrix: *const CvMat, dist_coeffs: *const CvMat, R: *const CvMat, new_camera_matrix: *const CvMat, mapx: *const CvArr, mapy: *const CvArr);
+  pub fn cvUndistortPoints(src: *const CvMat, dst: *const CvMat, camera_matrix: *const CvMat, dist_coeffs: *const CvMat, R: *const CvMat, P: *const CvMat);
+  pub fn cvCreateStructuringElementEx(cols: c_int, rows: c_int, anchor_x: c_int, anchor_y: c_int, shape: c_int, value: *const c_int) -> *const IplConvKernel;
+  pub fn cvReleaseStructuringElement(element: *const *const IplConvKernel);
+  pub fn cvErode(src: *const CvArr, dst: *const CvArr, element: *const IplConvKernel, iterations: c_int);
+  pub fn cvDilate(src: *const CvArr, dst: *const CvArr, element: *const IplConvKernel, iterations: c_int);
+  pub fn cvMorphologyEx(src: *const CvArr, dst: *const CvArr, temp: *const CvArr, element: *const IplConvKernel, operation: c_int, iterations: c_int);
+  pub fn cvMoments(arr: *const CvArr, moments: *const CvMoments, binary: c_int);
+  pub fn cvGetSpatialMoment(moments: *const CvMoments, x_order: c_int, y_order: c_int) -> c_double;
+  pub fn cvGetCentralMoment(moments: *const CvMoments, x_order: c_int, y_order: c_int) -> c_double;
+  pub fn cvGetNormalizedCentralMoment(moments: *const CvMoments, x_order: c_int, y_order: c_int) -> c_double; 
+  pub fn cvGetHuMoments(moments: *const CvMoments, hu_moments: *const CvHuMoments); 
+  pub fn cvSampleLine(image: *const CvArr, pt1: CvPoint, pt2: CvPoint, buffer: *const c_void, connectivity: c_int) -> c_int;
+  pub fn cvGetRectSubPix(src: *const CvArr, dst: *const CvArr, center: CvPoint2D32f); 
+  pub fn cvGetQuadrangleSubPix(src: *const CvArr, dst: *const CvArr, map_matrix: *const CvMat);
+  pub fn cvMatchTemplate(image: *const CvArr, temp: *const CvArr, result: *const CvArr, method: c_int);
+  pub fn cvCalcEMD2(signature1: *const CvArr, signature2: *const CvArr, distance_type: c_int, distance_func: extern "C" fn(a: *const c_float, b: *const c_float, c: *const c_float, user_param: *const c_void) -> c_float, const_matrix: *const CvArr, flow: *const CvArr, lower_bound: *const c_float, userdata: *const c_void) -> c_float;
+}
