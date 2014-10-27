@@ -13,13 +13,28 @@ pub struct CvCapture;
 pub struct CvChain;
 
 #[repr(C)]
+pub struct CvChainPtReader;
+
+#[repr(C)]
+pub struct CvConnectedComp;
+
+#[repr(C)]
 pub struct CvContour;
+
+#[repr(C)]
+pub struct CvContourScanner;
+
+#[repr(C)]
+pub struct CvFont;
 
 #[repr(C)]
 pub struct CvHistogram;
 
 #[repr(C)]
 pub struct CvHuMoments;
+
+#[repr(C)]
+pub struct CvLineIterator;
 
 #[repr(C)]
 pub struct CvMat;
@@ -44,6 +59,9 @@ pub struct CvScalar;
 
 #[repr(C)]
 pub struct CvSeq;
+
+#[repr(C)]
+pub struct CvSeqBlock;
 
 #[repr(C)]
 pub struct CvSize {
