@@ -1,7 +1,7 @@
-use std::{mem, ptr};
+use std::ptr;
 use ffi::core::*;
 use ffi::highgui::*;
-use ffi::types::{IplImage};
+use ffi::types::{AsCvArr, IplImage};
 
 pub enum Image {
   OwnedImage(*const IplImage),
@@ -39,14 +39,14 @@ impl Image {
 
   pub fn width(&self) -> int {
     unsafe {
-      let size = cvGetSize(mem::transmute(self.ptr()));
+      let size = cvGetSize(self.ptr().as_arr());
       size.width as int
     }
   }
 
   pub fn height(&self) -> int {
     unsafe {
-      let size = cvGetSize(mem::transmute(self.ptr()));
+      let size = cvGetSize(self.ptr().as_arr());
       size.height as int
     }
   }
@@ -59,7 +59,7 @@ impl Clone for Image {
 }
 
 impl Drop for Image {
-  fn drop(&mut self) -> () {
+  fn drop(&mut self) {
     match *self {
       OwnedImage(p) => unsafe { cvReleaseImage(&p); },
       _ => (),
