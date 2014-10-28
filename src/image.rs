@@ -2,6 +2,7 @@ use std::ptr;
 use ffi::core::*;
 use ffi::highgui::*;
 use ffi::types::{AsCvArr, IplImage};
+use core::Size;
 
 pub enum Image {
   OwnedImage(*const IplImage),
@@ -37,19 +38,15 @@ impl Image {
     })
   }
 
-  pub fn width(&self) -> int {
+  pub fn size(&self) -> Size {
     unsafe {
       let size = cvGetSize(self.ptr().as_arr());
-      size.width as int
+      Size { width: size.width as int, height: size.height as int }
     }
   }
 
-  pub fn height(&self) -> int {
-    unsafe {
-      let size = cvGetSize(self.ptr().as_arr());
-      size.height as int
-    }
-  }
+  pub fn width(&self) -> int { self.size().width }
+  pub fn height(&self) -> int { self.size().height }
 }
 
 impl Clone for Image {

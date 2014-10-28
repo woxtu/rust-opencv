@@ -8,6 +8,7 @@
 
 extern crate libc;
 
+pub mod core;
 pub mod highgui;
 pub mod image;
 pub mod video;

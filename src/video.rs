@@ -1,6 +1,7 @@
 use std::mem;
 use ffi::video::*;
 use ffi::types::{CvCapture, CvSize, CvVideoWriter};
+use core::Size;
 use image::{BorrowedImage, Image};
 
 pub struct Frames<'a> {
@@ -50,7 +51,7 @@ impl Capture {
 }
 
 impl Drop for Capture {
-  fn drop(&mut self) -> () {
+  fn drop(&mut self) {
     unsafe { cvReleaseCapture(&self.raw); }
   }
 }
@@ -60,9 +61,9 @@ pub struct Writer {
 }
 
 impl Writer {
-  pub fn open(path: &Path, fourcc: &[char, ..4], fps: f64, frame_width: int, frame_height: int, is_color: bool) -> Result<Writer, String> {
+  pub fn open(path: &Path, fourcc: &[char, ..4], fps: f64, frame: &Size, is_color: bool) -> Result<Writer, String> {
     let fourcc = unsafe { mem::transmute::<_, i32>([fourcc[0] as u8, fourcc[1] as u8, fourcc[2] as u8, fourcc[3] as u8]) };
-    let frame_size = CvSize { width: frame_width as i32, height: frame_height as i32 };
+    let frame_size = CvSize { width: frame.width as i32, height: frame.height as i32 };
     let is_color = if is_color { 1i } else { 0i };
 
     path.with_c_str(|path| unsafe {
@@ -79,7 +80,7 @@ impl Writer {
 }
 
 impl Drop for Writer {
-  fn drop(&mut self) -> () {
+  fn drop(&mut self) {
     unsafe { cvReleaseVideoWriter(&self.raw); }
   }
 }
