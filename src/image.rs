@@ -1,18 +1,13 @@
 use std::ptr;
 use ffi::core::*;
 use ffi::highgui::*;
-use ffi::types::{AsCvArr, IplImage};
-use core::Size;
+use ffi::imgproc::*;
+use ffi::types::{AsCvArr, CvPoint, IplImage};
+use core::{Color, Point, Size};
 
 pub enum Image {
   OwnedImage(*const IplImage),
   BorrowedImage(*const IplImage),
-}
-
-pub enum LoadColor {
-  Unchanged = -1,
-  GrayScale = 0,
-  Color = 1,
 }
 
 impl Image {
@@ -23,9 +18,9 @@ impl Image {
     }
   }
 
-  pub fn load(path: &Path, flag: Option<LoadColor>) -> Result<Image, String> {
+  pub fn load(path: &Path) -> Result<Image, String> {
     path.with_c_str(|path_c_str| unsafe {
-      match cvLoadImage(path_c_str, flag.unwrap_or(Color) as i32) {
+      match cvLoadImage(path_c_str, 1) { // CV_LOAD_IMAGE_COLOR
         p if p.is_not_null() => Ok(OwnedImage(p)),
         _ => Err(path_c_str.to_string()),
       }
@@ -47,6 +42,21 @@ impl Image {
 
   pub fn width(&self) -> int { self.size().width }
   pub fn height(&self) -> int { self.size().height }
+
+  pub fn draw_line(&mut self, p1: &Point, p2: &Point, color: &Color, thickness: uint) {
+    let p1 = CvPoint { x: p1.x as i32, y: p1.y as i32 };
+    let p2 = CvPoint { x: p2.x as i32, y: p2.y as i32 };
+    unsafe {
+      cvLine(self.ptr().as_arr(), p1, p2, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
+    }
+  }
+
+  pub fn draw_circle(&mut self, center: &Point, radius: uint, color: &Color, thickness: uint) {
+    let center = CvPoint { x: center.x as i32, y: center.y as i32 };
+    unsafe {
+      cvCircle(self.ptr().as_arr(), center, radius as i32, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
+    }
+  }
 }
 
 impl Clone for Image {

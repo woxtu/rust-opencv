@@ -1,22 +1,22 @@
 #[deriving(Clone, PartialEq, Show)]
 pub struct Color {
-  red: f64,
-  green: f64,
-  blue: f64,
-  alpha: f64,
+  red: u8,
+  green: u8,
+  blue: u8,
+  alpha: u8,
 }
 
 impl Color {
-  pub fn from_rgb(red: f64, green: f64, blue: f64) -> Color {
-    Color { red: red, green: green, blue: blue, alpha: 0.0 }
+  pub fn from_rgb(red: u8, green: u8, blue: u8) -> Color {
+    Color { red: red, green: green, blue: blue, alpha: 0 }
   }
 
-  pub fn from_rgba(red: f64, green: f64, blue: f64, alpha: f64) -> Color {
+  pub fn from_rgba(red: u8, green: u8, blue: u8, alpha: u8) -> Color {
     Color { red: red, green: green, blue: blue, alpha: alpha }
   }
 
   pub fn as_scalar(&self) -> Scalar {
-    [self.blue, self.green, self.red, self.alpha]
+    [self.blue as f64, self.green as f64, self.red as f64, self.alpha as f64]
   }
 }
 

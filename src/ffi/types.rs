@@ -1,5 +1,5 @@
 use std::mem;
-use libc::c_int;
+use libc::{c_double, c_int};
 
 #[repr(C)]
 pub struct CvArr;
@@ -46,7 +46,7 @@ pub struct CvMat;
 
 impl AsCvArr for *const CvMat {
   fn as_arr(&self) -> *const CvArr {
-    unsafe { mem::transmute(self) }
+    unsafe { mem::transmute(*self) }
   }
 }
 
@@ -57,7 +57,10 @@ pub struct CvMemStorage;
 pub struct CvMoments;
 
 #[repr(C)]
-pub struct CvPoint;
+pub struct CvPoint {
+  pub x: c_int,
+  pub y: c_int,
+}
 
 #[repr(C)]
 pub struct CvPoint2D32f;
@@ -66,7 +69,7 @@ pub struct CvPoint2D32f;
 pub struct CvRect;
 
 #[repr(C)]
-pub struct CvScalar;
+pub type CvScalar = [c_double, ..4];
 
 #[repr(C)]
 pub struct CvSeq;
@@ -97,6 +100,6 @@ pub struct IplImage;
 
 impl AsCvArr for *const IplImage {
   fn as_arr(&self) -> *const CvArr {
-    unsafe { mem::transmute(self) }
+    unsafe { mem::transmute(*self) }
   }
 } 
