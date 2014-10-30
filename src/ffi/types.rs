@@ -66,7 +66,12 @@ pub struct CvPoint {
 pub struct CvPoint2D32f;
 
 #[repr(C)]
-pub struct CvRect;
+pub struct CvRect {
+  pub x: c_int,
+  pub y: c_int,
+  pub width: c_int,
+  pub height: c_int,
+}
 
 #[repr(C)]
 pub type CvScalar = [c_double, ..4];

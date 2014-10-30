@@ -32,6 +32,20 @@ impl Point {
   }
 }
 
+#[deriving(Clone, PartialEq, Show)]
+pub struct Rect {
+  pub x: int,
+  pub y: int,
+  pub width: int,
+  pub height: int,
+}
+
+impl Rect {
+  pub fn new(x: int, y: int, width: int, height: int) -> Rect {
+    Rect { x: x, y: y, width: width, height: height }
+  }
+}
+
 pub type Scalar = [f64, ..4];
 
 #[deriving(Clone, PartialEq, Show)]
