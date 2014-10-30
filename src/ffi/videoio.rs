@@ -1,7 +1,7 @@
 use libc::{c_char, c_double, c_int};
 use ffi::types::{CvCapture, CvSize, CvVideoWriter, IplImage};
 
-#[link(name = "opencv_video")]
+#[link(name = "opencv_videoio")]
 extern "C" {
   pub fn cvCreateFileCapture(filename: *const c_char) -> *const CvCapture;
   pub fn cvCreateCameraCapture(index: c_int) -> *const CvCapture;
