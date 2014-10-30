@@ -11,5 +11,5 @@ extern crate libc;
 pub mod core;
 pub mod highgui;
 pub mod image;
-pub mod videoio;
+pub mod video;
 mod ffi;
