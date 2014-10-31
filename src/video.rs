@@ -1,5 +1,5 @@
 use std::mem;
-use ffi::video::*;
+use ffi::videoio::*;
 use ffi::types::{CvCapture, CvSize, CvVideoWriter};
 use core::Size;
 use image::{BorrowedImage, Image};
@@ -43,6 +43,24 @@ impl Capture {
         _ => Err(path_c_str.to_string()),
       }
     })
+  }
+
+  pub fn from_camera(index: int) -> Result<Capture, String> {
+    unsafe {
+      match cvCreateCameraCapture(index as i32) {
+        c if c.is_not_null() => {
+          Ok(Capture {raw: c})
+        },
+        _ => {
+          let err_message = format!(
+            "Camera failed to properly initialize! Maybe you're using the wrong camera index ({}). {}", 
+            index, 
+            "Use `from_camera(0)` to autodetect the camera index."
+          );
+          Err(err_message)
+        }
+      }
+    }
   }
 
   pub fn frames(&self) -> Frames {
