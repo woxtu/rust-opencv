@@ -2,7 +2,7 @@ use std::ptr;
 use ffi::core::*;
 use ffi::highgui::*;
 use ffi::imgproc::*;
-use ffi::types::{AsCvArr, CvPoint, CvRect, CvSize, IplImage};
+use ffi::types::{CvArr, CvPoint, CvRect, CvSize, IplImage};
 use core::{Color, Point, Rect, Size};
 
 pub enum Image {
@@ -35,7 +35,7 @@ impl Image {
 
   pub fn size(&self) -> Size {
     unsafe {
-      let size = cvGetSize(self.ptr().as_arr());
+      let size = cvGetSize(self.ptr() as *const CvArr);
       Size { width: size.width as int, height: size.height as int }
     }
   }
@@ -47,7 +47,7 @@ impl Image {
     let p1 = CvPoint { x: p1.x as i32, y: p1.y as i32 };
     let p2 = CvPoint { x: p2.x as i32, y: p2.y as i32 };
     unsafe {
-      cvLine(self.ptr().as_arr(), p1, p2, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
+      cvLine(self.ptr() as *const CvArr, p1, p2, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
     }
   }
 
@@ -55,21 +55,21 @@ impl Image {
     let p1 = CvPoint { x: p1.x as i32, y: p1.y as i32 };
     let p2 = CvPoint { x: p2.x as i32, y: p2.y as i32 };
     unsafe {
-      cvRectangle(self.ptr().as_arr(), p1, p2, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
+      cvRectangle(self.ptr() as *const CvArr, p1, p2, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
     }
   }
 
   pub fn add_rectangle_r(&mut self, rect: &Rect, color: &Color, thickness: uint) {
     let rect = CvRect { x: rect.x as i32, y: rect.y as i32, width: rect.width as i32, height: rect.height as i32 };
     unsafe {
-      cvRectangleR(self.ptr().as_arr(), rect, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
+      cvRectangleR(self.ptr() as *const CvArr, rect, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
     }
   }
 
   pub fn add_circle(&mut self, center: &Point, radius: uint, color: &Color, thickness: uint) {
     let center = CvPoint { x: center.x as i32, y: center.y as i32 };
     unsafe {
-      cvCircle(self.ptr().as_arr(), center, radius as i32, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
+      cvCircle(self.ptr() as *const CvArr, center, radius as i32, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
     }
   }
 
@@ -77,7 +77,7 @@ impl Image {
     let center = CvPoint { x: center.x as i32, y: center.y as i32 };
     let axes = CvSize { width: axes.width as i32, height: axes.height as i32 };
     unsafe {
-      cvEllipse(self.ptr().as_arr(), center, axes, angle, start_angle, end_angle, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
+      cvEllipse(self.ptr() as *const CvArr, center, axes, angle, start_angle, end_angle, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
     }
   }
 }

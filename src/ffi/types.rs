@@ -4,10 +4,6 @@ use libc::{c_double, c_int};
 #[repr(C)]
 pub struct CvArr;
 
-pub trait AsCvArr {
-  fn as_arr(&self) -> *const CvArr;
-}
-
 #[repr(C)]
 pub struct CvBox2D;
 
@@ -43,12 +39,6 @@ pub struct CvLineIterator;
 
 #[repr(C)]
 pub struct CvMat;
-
-impl AsCvArr for *const CvMat {
-  fn as_arr(&self) -> *const CvArr {
-    unsafe { mem::transmute(*self) }
-  }
-}
 
 #[repr(C)]
 pub struct CvMemStorage;
@@ -102,9 +92,3 @@ pub struct IplConvKernel;
 
 #[repr(C)]
 pub struct IplImage;
-
-impl AsCvArr for *const IplImage {
-  fn as_arr(&self) -> *const CvArr {
-    unsafe { mem::transmute(*self) }
-  }
-} 
