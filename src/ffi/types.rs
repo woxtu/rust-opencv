@@ -29,6 +29,9 @@ pub struct CvContourScanner;
 pub struct CvFont;
 
 #[repr(C)]
+pub struct CvHaarClassifierCascade;
+
+#[repr(C)]
 pub struct CvHistogram;
 
 #[repr(C)]
@@ -67,7 +70,15 @@ pub struct CvRect {
 pub type CvScalar = [c_double, ..4];
 
 #[repr(C)]
-pub struct CvSeq;
+pub struct CvSeq {
+  pub flags: c_int,
+  pub header_size: c_int,
+  pub h_prev: *mut CvSeq,
+  pub h_next: *mut CvSeq,
+  pub v_prev: *mut CvSeq,
+  pub v_next: *mut CvSeq,
+  pub total: c_int,
+}
 
 #[repr(C)]
 pub struct CvSeqBlock;
