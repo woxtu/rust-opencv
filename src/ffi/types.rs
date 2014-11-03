@@ -1,4 +1,3 @@
-use std::mem;
 use libc::{c_double, c_int};
 
 #[repr(C)]
