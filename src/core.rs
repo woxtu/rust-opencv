@@ -1,5 +1,5 @@
-use ffi::types::{CvSeq, CvRect};
 use ffi::core::*;
+use ffi::types::{CvSeq, CvRect};
 
 #[deriving(Clone, PartialEq, Show)]
 pub struct Color {
@@ -75,15 +75,11 @@ impl Iterator<Rect> for Seq {
   }
 }
 
-impl Collection for Seq {
+impl Seq {
   fn len(&self) -> uint {
     unsafe { 
       let total = (*self.raw).total;
-      if total.gt(&0) {
-        total as uint
-      } else {
-        0u
-      }
+      if total.gt(&0) { total as uint } else { 0u }
     }
   }
 }
