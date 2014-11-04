@@ -3,6 +3,11 @@ name = "opencv"
 version = "0.0.1"
 authors = [ "woxtu <woxtup@gmail.com>" ]
 
+[features]
+default = ["opencv24"]
+opencv24 = []
+opencv30 = []
+
 [lib]
 name = "opencv"
 path = "src/lib.rs"
