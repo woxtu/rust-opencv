@@ -2,7 +2,7 @@ use std::mem;
 use ffi::videoio::*;
 use ffi::types::{CvCapture, CvSize, CvVideoWriter};
 use core::Size;
-use image::{BorrowedImage, Image};
+use image::Image;
 
 pub struct Frames<'a> {
   capture: &'a Capture,
@@ -13,7 +13,7 @@ impl<'a> Frames<'a> {
     unsafe {
       cvSetCaptureProperty(self.capture.raw, CV_CAP_PROP_POS_FRAMES, index as f64);
       match cvQueryFrame(self.capture.raw) {
-        p if p.is_not_null() => Some(BorrowedImage(p)),
+        p if p.is_not_null() => Some(Image { raw: p, is_owned: false }),
         _ => None,
       }
     }
@@ -93,7 +93,7 @@ impl Writer {
   }
 
   pub fn write(&self, image: &Image) -> bool {
-    unsafe { cvWriteFrame(self.raw, image.ptr()) != 0 }
+    unsafe { cvWriteFrame(self.raw, image.raw) != 0 }
   }
 }
 

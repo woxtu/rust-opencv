@@ -26,7 +26,7 @@ impl CascadeClassifier {
 
     unsafe {
       match cvHaarDetectObjects(
-        image.ptr() as *const CvArr, 
+        image.raw as *const CvArr, 
         self.raw,
         cvCreateMemStorage(0),
         scale_factor,

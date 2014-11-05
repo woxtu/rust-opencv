@@ -5,23 +5,16 @@ use ffi::imgproc::*;
 use ffi::types::{CvArr, CvPoint, CvRect, CvSize, IplImage};
 use core::{Color, Point, Rect, Size};
 
-pub enum Image {
-  OwnedImage(*const IplImage),
-  BorrowedImage(*const IplImage),
+pub struct Image {
+  pub raw: *const IplImage,
+  pub is_owned: bool,
 }
 
 impl Image {
-  pub fn ptr(&self) -> *const IplImage {
-    match *self {
-      OwnedImage(p) => p,
-      BorrowedImage(p) => p,
-    }
-  }
-
   pub fn load(path: &Path) -> Result<Image, String> {
     path.with_c_str(|path_c_str| unsafe {
       match cvLoadImage(path_c_str, 1) { // CV_LOAD_IMAGE_COLOR
-        p if p.is_not_null() => Ok(OwnedImage(p)),
+        p if p.is_not_null() => Ok(Image { raw: p, is_owned: true }),
         _ => Err(path_c_str.to_string()),
       }
     })
@@ -29,13 +22,13 @@ impl Image {
 
   pub fn save(&self, path: &Path) -> bool {
     path.with_c_str(|path| unsafe {
-      cvSaveImage(path, self.ptr(), ptr::null()) == 0
+      cvSaveImage(path, self.raw, ptr::null()) == 0
     })
   }
 
   pub fn size(&self) -> Size {
     unsafe {
-      let size = cvGetSize(self.ptr() as *const CvArr);
+      let size = cvGetSize(self.raw as *const CvArr);
       Size { width: size.width as int, height: size.height as int }
     }
   }
@@ -47,7 +40,7 @@ impl Image {
     let p1 = CvPoint { x: p1.x as i32, y: p1.y as i32 };
     let p2 = CvPoint { x: p2.x as i32, y: p2.y as i32 };
     unsafe {
-      cvLine(self.ptr() as *const CvArr, p1, p2, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
+      cvLine(self.raw as *const CvArr, p1, p2, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
     }
   }
 
@@ -55,21 +48,21 @@ impl Image {
     let p1 = CvPoint { x: p1.x as i32, y: p1.y as i32 };
     let p2 = CvPoint { x: p2.x as i32, y: p2.y as i32 };
     unsafe {
-      cvRectangle(self.ptr() as *const CvArr, p1, p2, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
+      cvRectangle(self.raw as *const CvArr, p1, p2, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
     }
   }
 
   pub fn add_rectangle_r(&mut self, rect: &Rect, color: &Color, thickness: uint) {
     let rect = CvRect { x: rect.x as i32, y: rect.y as i32, width: rect.width as i32, height: rect.height as i32 };
     unsafe {
-      cvRectangleR(self.ptr() as *const CvArr, rect, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
+      cvRectangleR(self.raw as *const CvArr, rect, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
     }
   }
 
   pub fn add_circle(&mut self, center: &Point, radius: uint, color: &Color, thickness: uint) {
     let center = CvPoint { x: center.x as i32, y: center.y as i32 };
     unsafe {
-      cvCircle(self.ptr() as *const CvArr, center, radius as i32, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
+      cvCircle(self.raw as *const CvArr, center, radius as i32, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
     }
   }
 
@@ -77,22 +70,19 @@ impl Image {
     let center = CvPoint { x: center.x as i32, y: center.y as i32 };
     let axes = CvSize { width: axes.width as i32, height: axes.height as i32 };
     unsafe {
-      cvEllipse(self.ptr() as *const CvArr, center, axes, angle, start_angle, end_angle, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
+      cvEllipse(self.raw as *const CvArr, center, axes, angle, start_angle, end_angle, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
     }
   }
 }
 
 impl Clone for Image {
   fn clone(&self) -> Image {
-    unsafe { OwnedImage(cvCloneImage(self.ptr())) }
+    unsafe { Image { raw: cvCloneImage(self.raw), is_owned: true } }
   }
 }
 
 impl Drop for Image {
   fn drop(&mut self) {
-    match *self {
-      OwnedImage(p) => unsafe { cvReleaseImage(&p); },
-      _ => (),
-    }
+    if self.is_owned { unsafe { cvReleaseImage(&self.raw); } }
   }
 }
