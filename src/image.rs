@@ -73,6 +73,32 @@ impl Image {
       cvEllipse(self.raw as *const CvArr, center, axes, angle, start_angle, end_angle, color.as_scalar(), thickness as i32, 16, 0); // CV_AA
     }
   }
+
+  pub fn add_filled_convex_polygon(&mut self, points: &[&Point], color: &Color) {
+    let count = points.len();
+    let points =
+      points.iter()
+      .map(|p| {
+        CvPoint { x: p.x as i32, y: p.y as i32 }
+      })
+      .collect::<Vec<CvPoint>>().as_slice().as_ptr();
+    unsafe {
+      cvFillConvexPoly(self.raw as *const CvArr, points, count as i32, color.as_scalar(), 16, 0); // CV_AA
+    }
+  }
+
+  pub fn add_filled_polygons(&mut self, polygons: &[&[&Point]], contours: uint, color: &Color) {
+    let counts = polygons.iter().map(|ps| ps.len() as i32).collect::<Vec<i32>>().as_slice().as_ptr();
+    let polygons =
+      polygons.iter()
+      .map(|ps| {
+        ps.iter().map(|p| CvPoint { x: p.x as i32, y: p.y as i32 }).collect::<Vec<CvPoint>>().as_slice().as_ptr()
+      })
+      .collect::<Vec<*const CvPoint>>().as_slice().as_ptr();
+    unsafe {
+      cvFillPoly(self.raw as *const CvArr, polygons, counts, contours as i32, color.as_scalar(), 16, 0); // CV_AA
+    }
+  }
 }
 
 impl Clone for Image {
