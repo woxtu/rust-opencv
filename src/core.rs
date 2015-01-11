@@ -62,7 +62,7 @@ impl Iterator<Rect> for Seq {
       if self.curr.lt(&self.len()) {
         match cvGetSeqElem(&*self.raw, self.curr as int) {
           c if c.is_not_null() => {
-            let rect = *(c as *mut CvRect);
+            let ref rect = *(c as *mut CvRect);
             self.curr += 1;
             Some(Rect::new(rect.x as int, rect.y as int, rect.width as int, rect.height as int))
           },
@@ -77,7 +77,7 @@ impl Iterator<Rect> for Seq {
 
 impl Seq {
   fn len(&self) -> uint {
-    unsafe { 
+    unsafe {
       let total = (*self.raw).total;
       if total.gt(&0) { total as uint } else { 0u }
     }

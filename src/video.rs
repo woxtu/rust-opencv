@@ -53,8 +53,8 @@ impl Capture {
         },
         _ => {
           let err_message = format!(
-            "Camera failed to properly initialize! Maybe you're using the wrong camera index ({}). {}", 
-            index, 
+            "Camera failed to properly initialize! Maybe you're using the wrong camera index ({}). {}",
+            index,
             "Use `from_camera(0)` to autodetect the camera index."
           );
           Err(err_message)
@@ -81,10 +81,10 @@ pub struct Writer {
 impl Writer {
   pub fn open(path: &Path, fourcc: &[char, ..4], fps: f64, frame: &Size, is_color: bool) -> Result<Writer, String> {
     let fourcc = unsafe { mem::transmute::<_, i32>([fourcc[0] as u8, fourcc[1] as u8, fourcc[2] as u8, fourcc[3] as u8]) };
-    let frame_size = CvSize { width: frame.width as i32, height: frame.height as i32 };
     let is_color = if is_color { 1i } else { 0i };
 
     path.with_c_str(|path| unsafe {
+      let frame_size = CvSize { width: frame.width as i32, height: frame.height as i32 };
       match cvCreateVideoWriter(path, fourcc, fps as f64, frame_size, is_color as i32) {
         p if p.is_not_null() => Ok(Writer { raw: p }),
         _ => Err(path.to_string()),
