@@ -60,13 +60,11 @@ pub struct Window<'a> {
 }
 
 impl<'a> Window<'a> {
-  pub fn named(name: &str) -> Result<Window, String> {
+  pub fn named(name: &str) -> Window {
     name.with_c_str(|name_c_str| unsafe {
-      match cvNamedWindow(name_c_str, 1i32) {
-        0 => Ok(Window { name: name.to_string(), trackbars: Vec::new(), on_mouse: None }),
-        _ => Err(name.to_string()),
-      }
-    })
+        cvNamedWindow(name_c_str, 1i32);
+    });
+    Window { name: name.to_string(), trackbars: Vec::new(), on_mouse: None }
   }
 
   pub fn show(&self, image: &Image) {
